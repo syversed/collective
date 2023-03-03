@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.tera" %}
 {% block pageTitle %} Index - Collective {% endblock pageTitle %}
 {% block pageContent %} 
     Welcome to Collective.

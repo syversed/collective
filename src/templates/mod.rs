@@ -1,5 +1,5 @@
-use tera::Tera;
 use tera::Error;
+use tera::Tera;
 
 /// A Template Context. Should be attached to a Router.
 /// Provides usage of the app's Tera templates.
@@ -11,9 +11,7 @@ pub struct TemplateCtx {
 impl TemplateCtx {
     /// Create a new TemplateCtx, from a provided Tera engine.
     pub fn new(engine: Tera) -> Self {
-        TemplateCtx { 
-            engine
-        }
+        TemplateCtx { engine }
     }
 
     pub fn get_engine(self) -> Tera {
@@ -27,23 +25,20 @@ impl TemplateCtx {
 pub fn load_templates(path: &str) -> Result<TemplateCtx, tera::Error> {
     info!("Loading templates from path: {}", &path);
 
-    let template_path = format!("{}/**/*.html", path);
+    let template_path = format!("{}/**/*.tera", path);
     let tera = match Tera::new(&template_path) {
-        Ok(t) => {
-            t
-        },
+        Ok(t) => t,
         Err(e) => {
             error!("Tera failed in load_templates call: {}", e);
-            return Err(e)
-        },
+            return Err(e);
+        }
     };
 
     info!("Tera loaded. File glob: {}", &template_path);
-    let template_names = tera.get_template_names();
 
-    if template_names.peekable().peek().is_none() {
+    if tera.get_template_names().peekable().peek().is_none() {
         error!("The specified directory has no Templates. Check directory paths.");
-        return Err(tera::Error::msg("loaded directory is empty"))
+        return Err(tera::Error::msg("loaded directory is empty"));
     } else {
         for template in tera.get_template_names() {
             info!("Detected template: {}", template);
