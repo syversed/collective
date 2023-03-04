@@ -5,16 +5,29 @@ extern crate log;
 
 use axum::routing::{get, get_service};
 use axum::Router;
+use markdown::MarkdownCtx;
+use templates::TemplateCtx;
 use tera::Tera;
 
 mod markdown;
 mod routes;
 mod templates;
 
+#[derive(Clone)]
+pub struct AppState {
+    tera: TemplateCtx,
+    markdown: MarkdownCtx
+}
+
 #[tokio::main]
 async fn main() {
     log4rs::init_file("log4rs.yml", Default::default()).unwrap();
-    info!("log4rs initialized");
+    info!("log4rs initialized configuration from file");
+
+    info!(
+        "Collective is starting in '{:?}'",
+        std::env::current_dir().unwrap()
+    );
 
     let tera = match templates::load_templates("app/templates") {
         Ok(t) => t,
@@ -25,11 +38,17 @@ async fn main() {
         }
     };
 
+    let markdown = markdown::init_state();
+
+    let state = AppState {
+        tera,
+        markdown
+    };
     //Routes that deal with the blog.
     let route_blog = Router::new()
         .route("/", get(routes::blog::index)) //Load the blog Index
         .route("/:slug", get(routes::blog::get_post_by_slug)) //Attempt to load a post by the post slug.
-        //.fallback(blog::fallback)
+        
         ;
 
     //Build the main Router as app.
@@ -38,7 +57,7 @@ async fn main() {
         .route("/", get(routes::index))
         .nest("/blog", route_blog)
         .fallback(routes::route_fallback)
-        .with_state(tera);
+        .with_state(state);
 
     let host = "127.0.0.1:8901";
 

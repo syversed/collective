@@ -13,14 +13,13 @@ use std::path::PathBuf;
 use tera::{Context, Tera};
 use tower_http::services::{ServeDir, ServeFile};
 
-use crate::templates::TemplateCtx;
-
+use crate::{templates::TemplateCtx, AppState};
 
 ///The main Index route for Collective.
-pub async fn index(State(tera): State<TemplateCtx>) -> impl IntoResponse {
-    let tera_engine = tera.get_engine(); //Get Tera from the app state.
+pub async fn index(State(state): State<AppState>) -> impl IntoResponse {
+    let tera_engine = state.tera.get_engine(); //Get Tera from the app state.
     let mut ctx = Context::new(); // Create a new Context for this Request.
-    //TODO: Populate the context.
+                                  //TODO: Populate the context.
 
     //"app/content/blogposts/2023-02-22-Example_Blogpost.md"
 
@@ -38,6 +37,8 @@ pub fn static_files() -> ServeDir {
 }
 
 pub async fn route_fallback(uri: String) -> impl IntoResponse {
-     
-    (StatusCode::NOT_FOUND, Html::from("Failed to find that page."))
+    (
+        StatusCode::NOT_FOUND,
+        Html::from("Failed to find that page."),
+    )
 }
