@@ -7,6 +7,7 @@ use axum::routing::{get, get_service};
 use axum::Router;
 use tera::Tera;
 
+mod markdown;
 mod routes;
 mod templates;
 

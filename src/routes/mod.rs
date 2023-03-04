@@ -1,3 +1,6 @@
+/// Contains routing features for Collective.
+/// Much of the main 'function' of routing is here, such as the main index,
+/// as well as functions to load static files and provide 404 handling.
 pub mod blog;
 
 use axum::{
@@ -5,16 +8,21 @@ use axum::{
     http::StatusCode,
     response::{Html, IntoResponse},
 };
+
 use std::path::PathBuf;
 use tera::{Context, Tera};
-use tower_http::services::ServeDir;
+use tower_http::services::{ServeDir, ServeFile};
 
 use crate::templates::TemplateCtx;
 
+
 ///The main Index route for Collective.
 pub async fn index(State(tera): State<TemplateCtx>) -> impl IntoResponse {
-    let tera_engine = tera.get_engine();
-    let mut ctx = Context::new();
+    let tera_engine = tera.get_engine(); //Get Tera from the app state.
+    let mut ctx = Context::new(); // Create a new Context for this Request.
+    //TODO: Populate the context.
+
+    //"app/content/blogposts/2023-02-22-Example_Blogpost.md"
 
     //Attempt to render the template with provided context.
     match tera_engine.render("index.tera", &ctx) {
@@ -29,7 +37,7 @@ pub fn static_files() -> ServeDir {
     static_dir
 }
 
-pub async fn route_fallback() -> impl IntoResponse {
-
+pub async fn route_fallback(uri: String) -> impl IntoResponse {
+     
     (StatusCode::NOT_FOUND, Html::from("Failed to find that page."))
 }
