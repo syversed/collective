@@ -19,7 +19,20 @@ impl MarkdownCtx {
         //Create a map...
         let mut markdown_map = HashMap::new();
         
-        for files in glob("app/content/**/*.*").unwrap() {
+        //Populate it with Markdown file paths.
+        //The Map is populated as <Name, Filepath>
+        //Paths are relative the working dir.
+       Self::discover(&mut markdown_map, "app/content/**/*.*");
+
+        MarkdownCtx {
+            markdown: markdown_map,
+            autogenerate: false, //TODO: NYI
+        }
+    }
+
+    /// Used to perform the directory scan.
+    fn discover(map: &mut HashMap<String, PathBuf>, dir: &str) {
+        for files in glob(dir).unwrap() {
             match files {
                 Ok(f) => {
                     info!("Found items: {:?}", f);
@@ -27,17 +40,17 @@ impl MarkdownCtx {
                     let file = filepath.file_name().unwrap().to_string_lossy().to_string();
                     
                     
-                    markdown_map.insert(file, filepath);
+                    map.insert(file, filepath);
                 },
                 Err(e) => todo!(),
             }
             
         }
+    }
 
-        MarkdownCtx {
-            markdown: markdown_map,
-            autogenerate: false, //TODO: NYI
-        }
+    /// Scan the Content directory, and repopulate the map of known .md files.
+    pub fn rediscover(&self) {
+
     }
 }
 /// Turn unparsed Markdown text into parsed HTML, ready to insert in a template.

@@ -55,6 +55,8 @@ async fn main() {
         
         ;
 
+    let route_projects = Router::new()
+        .route("/", get(routes::projects::index));
     //Build the main Router as app.
     let app = Router::new()
         .nest_service("/static", get_service(routes::static_files()))
