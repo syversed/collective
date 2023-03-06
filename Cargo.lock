@@ -280,6 +280,7 @@ dependencies = [
  "axum",
  "chrono",
  "dotenv",
+ "glob",
  "lazy_static",
  "log",
  "log4rs",
@@ -514,6 +515,12 @@ dependencies = [
  "libc",
  "wasi 0.11.0+wasi-snapshot-preview1",
 ]
+
+[[package]]
+name = "glob"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d2fabcfbdc87f4758337ca535fb41a6d701b65693ce38287d856d1674551ec9b"
 
 [[package]]
 name = "globset"

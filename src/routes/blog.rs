@@ -15,8 +15,8 @@ pub async fn index(State(state): State<AppState>) -> impl IntoResponse {
     let mut ctx = Context::new(); // Create a new Context for this Request.
                                   //TODO: Populate the context.
     
-    info!("Markdown context: {:?}", state.markdown.indir);
-    
+    info!("Markdown context: {:?}", state.markdown);
+    info!("Markdown files: {:?}", state.markdown.markdown);
 
     //Attempt to render the template with provided context.
     match tera_engine.render("index.tera", &ctx) {

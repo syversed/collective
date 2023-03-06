@@ -40,10 +40,14 @@ async fn main() {
 
     let markdown = markdown::init_state();
 
+    // The overall 'state' of Collective.
+    // Contains the Tera and Markdown engines, used for
+    // rendering pages. Other information may also go here.
     let state = AppState {
         tera,
         markdown
     };
+
     //Routes that deal with the blog.
     let route_blog = Router::new()
         .route("/", get(routes::blog::index)) //Load the blog Index
