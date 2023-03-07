@@ -13,6 +13,7 @@ mod markdown;
 mod routes;
 mod templates;
 
+
 #[derive(Clone)]
 pub struct AppState {
     tera: TemplateCtx,
@@ -42,26 +43,16 @@ async fn main() {
 
     // The overall 'state' of Collective.
     // Contains the Tera and Markdown engines, used for
-    // rendering pages. Other information may also go here.
+    // rendering. Other information may also go here.
     let state = AppState {
         tera,
         markdown
     };
 
-    //Routes that deal with the blog.
-    let route_blog = Router::new()
-        .route("/", get(routes::blog::index)) //Load the blog Index
-        .route("/:slug", get(routes::blog::get_post_by_slug)) //Attempt to load a post by the post slug.
-        
-        ;
-
-    let route_projects = Router::new()
-        .route("/", get(routes::projects::index));
     //Build the main Router as app.
     let app = Router::new()
         .nest_service("/static", get_service(routes::static_files()))
         .route("/", get(routes::index))
-        .nest("/blog", route_blog)
         .fallback(routes::route_fallback)
         .with_state(state);
 
