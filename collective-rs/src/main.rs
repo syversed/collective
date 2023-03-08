@@ -63,5 +63,5 @@ async fn main() {
     axum::Server::bind(&host.parse().unwrap())
         .serve(app.into_make_service())
         .await
-        .expect("server failed to build");
+        .expect("server failed to build")
 }
