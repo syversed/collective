@@ -1,28 +1,27 @@
 /// Contains routing features for Collective.
-/// Much of the main 'function' of routing is here, such as the main index,
-/// as well as functions to load static files and provide 404 handling.
+/// Much of the main 'function' of routing is here.
+/// 
+/// Primarily, Collective routes everything user-facing through the `/` route.
 pub mod blog;
 pub mod projects;
 
 use axum::{
-    extract::{Path, State},
-    http::{StatusCode, header},
+    extract::{State},
+    http::{StatusCode},
     response::{Html, IntoResponse},
 };
 
-use std::path::PathBuf;
-use tera::{Context, Tera};
-use tower_http::services::{ServeDir, ServeFile};
 
-use crate::{templates::TemplateCtx, AppState};
+use tera::{Context, Tera};
+use tower_http::services::{ServeDir};
+
+use crate::{AppState};
 
 ///The main route for Collective. Returns the main 'Index' page.
 pub async fn index(State(state): State<AppState>) -> impl IntoResponse {
     let tera_engine = state.tera.get_engine(); //Get Tera from the app state.
     let mut ctx = Context::new(); // Create a new Context for this Request.
                                   //TODO: Populate the context.
-
-    //"app/content/blogposts/2023-02-22-Example_Blogpost.md"
 
     //Attempt to render the template with provided context.
     match tera_engine.render("index.tera", &ctx) {
@@ -32,11 +31,13 @@ pub async fn index(State(state): State<AppState>) -> impl IntoResponse {
 }
 
 ///Construct a ServeDir service, for application static files.
+/// This is probably OK for now; it just guesses the filetype.
 pub fn static_files() -> ServeDir {
-    let static_dir = ServeDir::new("app/static").append_index_html_on_directories(false);
+    let static_dir = ServeDir::new("app/static").append_index_html_on_directories(true);
     static_dir
 }
 
+/// Using the provided `engine`, render `template` with `ctx`.
 pub async fn tera_render(engine: Tera, ctx: Context, template: String) {
 
 }

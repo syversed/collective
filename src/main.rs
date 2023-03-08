@@ -22,6 +22,7 @@ pub struct AppState {
 
 #[tokio::main]
 async fn main() {
+    //Start logging.
     log4rs::init_file("log4rs.yml", Default::default()).unwrap();
     info!("log4rs initialized configuration from file");
 
@@ -30,6 +31,7 @@ async fn main() {
         std::env::current_dir().unwrap()
     );
 
+    //Start up the Tera engine.
     let tera = match templates::load_templates("app/templates") {
         Ok(t) => t,
         Err(e) => {
@@ -39,17 +41,16 @@ async fn main() {
         }
     };
 
+    //Start up the Markdown parser.
     let markdown = markdown::init_state();
 
-    // The overall 'state' of Collective.
-    // Contains the Tera and Markdown engines, used for
-    // rendering. Other information may also go here.
+    //Build the main App state, which holds the Tera engine and Markdown parser.
     let state = AppState {
         tera,
         markdown
     };
 
-    //Build the main Router as app.
+    //Build the main Router.
     let app = Router::new()
         .nest_service("/static", get_service(routes::static_files()))
         .route("/", get(routes::index))
