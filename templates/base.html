@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block pageTitle %}
+        Loading &mdash; Collective
+        {% endblock pageTitle %}</title>
+        <link rel="stylesheet" href="/static/css/collective.css">
+    </head>
+    <body>
+        {% include "components/header.html" %}
+        <div id="page-content">
+            {% block pageContent %}
+            This page has no content!
+            {% endblock pageContent %}
+        </div>
+    </body>
+</html>

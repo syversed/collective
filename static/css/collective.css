@@ -1,0 +1,71 @@
+html {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    font-size: 100%;
+}
+*, *:before, *:after {
+    -webkit-box-sizing: inherit;
+    -moz-box-sizing: inherit;
+    box-sizing: inherit;
+}
+
+body {
+    width: 65vw;
+    height: auto;
+    margin: auto;
+    color: #ababab;
+    background-color: #141c2c;
+    display: flex;
+    flex-direction: column;
+}
+
+#page-header {
+    display: flex;
+    flex-direction: row;
+    margin-top: 2vh;
+    padding-top: 1vh;
+    padding-bottom: 1vh;
+    background-color: #080b12;
+}
+
+#collective-button-header {
+    color: rgb(255, 255, 255);
+    max-width: fit-content;
+    float: left;
+    margin-left: 5%;
+}
+
+#app-menu {
+    margin-left: auto;
+    margin-right: 5%;
+    display: flex;
+    justify-content: flex-end;
+    float: right;
+    text-align: left;
+}
+
+#app-menu > div {
+    white-space: nowrap;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+}
+
+#page-content {
+    margin: auto;
+    width: 90%;
+    min-height: 100%;
+    border: 0;
+    font-size: 1.25em;
+    white-space: pre-line;
+}
+
+#page-content > * {
+    margin: 0;
+    padding: 0;
+}
+
+.clickable:hover {
+    cursor:pointer;
+    color: #ffffff;
+}
