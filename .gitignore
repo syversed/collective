@@ -1,3 +1,4 @@
 /target
-/blog/raw/*
-/blog/html/*
+/blog
+/resources
+/.frontmatter

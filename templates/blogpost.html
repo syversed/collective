@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block pageTitle %}{{ post_name }} &dash; Collective{% endblock pageTitle %}
+{% block pageContent %}
+{{ post_content|markdown }}
+{% endblock pageContent %}

@@ -1,29 +1,56 @@
+use std::time;
+
 use axum::{Router, routing::get, response::Html};
 use log::info;
+use tokio::signal;
+use tokio::sync::oneshot::Sender;
 use tracing_subscriber::prelude::*;
 use tracing_subscriber::EnvFilter;
+
 
 mod app;
 mod routes;
 mod views;
+mod markdown;
+mod blog;
+
 
 #[tokio::main]
 async fn main() {
     tracing_subscriber::registry()
         .with(EnvFilter::new("collective=trace"))
         .with(tracing_subscriber::fmt::layer()
-            .with_target(false))
+            .with_target(true))
         .init();
-        
-
-    let app = routes::build().await;
 
     let local_addr = &"127.0.0.1:8080".parse().unwrap();
-
     info!("Collective is starting at http://{}", local_addr);
 
+    //Construct a shutdown channel. When used, this will shut down Collective.
+    // Triggering this is the preferred way to shut down.
+    let (shut_tx, mut shut_rx) = tokio::sync::mpsc::channel::<()>(1);
+    let app = routes::build(shut_tx.clone()).await;
+
+    //This task handles catching Ctrl-C for Collective. We implement this
+    // manually because all existing solutions for this suck.
+    tokio::task::spawn(async move {
+        let tx = shut_tx.clone();
+        match signal::ctrl_c().await {
+            Ok(_) => { tx.send(()).await.unwrap() },
+            Err(_) => {}
+        }
+    });
+
+    //The actual Shutdown operation. Shuts down Collective when the Receiver
+    // receives anthing.
     axum::Server::bind(local_addr)
         .serve(app.into_make_service())
+        .with_graceful_shutdown(async {
+            if let Some(_) = shut_rx.recv().await {
+                shut_rx.close();
+                info!("Shutdown signal received. Collective is shutting down.");
+            };
+        })
         .await
         .unwrap();
 }
