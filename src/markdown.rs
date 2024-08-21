@@ -9,7 +9,7 @@ use log::{info, error, trace};
 use serde::Deserialize;
 
 #[allow(non_snake_case)]
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, Default)]
 pub struct Frontmatter {
     Title: String,
     Author: String,
@@ -38,21 +38,21 @@ impl Frontmatter {
         }
     }
 
-    //Extractors
-    pub fn get_title(&self) -> &String {
-        &self.Title
+    //Extractors. These return a copy of the current values.
+    pub fn get_title(&self) -> String {
+        self.Title.clone()
     }
 
-    pub fn get_slug(&self) -> &String {
-        &self.Slug
+    pub fn get_slug(&self) -> String {
+        self.Slug.clone()
     }
 
-    pub fn get_author(&self) -> &String {
-        &self.Author
+    pub fn get_author(&self) -> String {
+        self.Author.clone()
     } 
 
-    pub fn get_date(&self) -> &String {
-        &self.Date
+    pub fn get_date(&self) -> String {
+        self.Date.clone()
     } 
 }
 

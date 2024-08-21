@@ -10,7 +10,7 @@ use tower_http::services::ServeDir;
 use tokio::{io::{self, AsyncReadExt}, sync::mpsc::Sender};
 use uuid::Uuid;
 
-use crate::{views::{IndexPage, BlogpostPage}, app::CollectiveState, blog::{Blogpost, self, Blogposts}};
+use crate::{app::CollectiveState, blog::{self, Blogpost, Blogposts}, markdown::Frontmatter, views::{BlogpostPage, IndexPage}};
 
 #[derive(Clone)]
 struct AppContext {
@@ -26,16 +26,28 @@ async fn site_index() -> Result<impl IntoResponse, StatusCode> {
     render_page(IndexPage)
 }
 
-/// Get the Blog's root. This will describe all currently available blogposts.
+/// Get the Blog's 'root'. 
+/// This is a homepage of sorts, and will describe all currently
+///  available blogposts.
 async fn get_blog_root() -> Result<impl IntoResponse, StatusCode> {
+    //FIXME: Stop loading this statically.
     let post = include_str!("../blog/2023-10-31_Welcome_to_Collective.md");
-    let page_content = blog::Blogpost::new(String::from(post))?;
+    let page_content = blog::Blogpost::new_from_string(String::from(post))?;
 
-    let post_name = page_content.get_frontmatter().get_title().to_string();
+    let frontmatter = match page_content.get_frontmatter() {
+        Some(fm) => {
+            fm
+        },
+        None => {
+            let fm = Frontmatter::default();
+            fm.clone()
+        },
+
+    };
 
     let page = BlogpostPage {
-        post_name,
-        post_content: page_content.get_post(),
+        post_name: frontmatter.get_title().into(),
+        post_content: &page_content.get_post(),
     };
 
     render_page(page)
@@ -88,14 +100,14 @@ pub async fn build(shutdown: Sender<()>) -> Router {
             trace!("Request returned {}", resp.status())
         })
         .on_failure(|resp: ServerErrorsFailureClass, latency: Duration, s: &Span| {
-            error!("Something is wrong! {}; request failed in {}s", resp.to_string(), latency.as_secs());
+            error!("{}; request failed in {}s", resp.to_string(), latency.as_secs());
         });
 
-    let mut blog = Blogposts::read_sources();
+    let posts = Blogposts::new().read_sources().await;
 
     let ctx = AppContext {
         shutdown,
-        blogposts: blog
+        blogposts: posts
     };
 
 

@@ -17,7 +17,7 @@ mod blog;
 
 #[tokio::main]
 async fn main() {
-    tracing_subscriber::registry()
+    tracing_subscriber::registry() //Tracing registry.
         .with(EnvFilter::new("collective=trace"))
         .with(tracing_subscriber::fmt::layer()
             .with_target(true))
@@ -41,10 +41,9 @@ async fn main() {
         }
     });
 
-    //The actual Shutdown operation. Shuts down Collective when the Receiver
-    // receives anthing.
-    axum::Server::bind(local_addr)
-        .serve(app.into_make_service())
+    
+    axum::Server::bind(local_addr) //Bind the server to the socket.
+        .serve(app.into_make_service()) //Serve our service.
         .with_graceful_shutdown(async {
             if let Some(_) = shut_rx.recv().await {
                 shut_rx.close();
