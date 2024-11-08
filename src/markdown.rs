@@ -11,10 +11,10 @@ use serde::Deserialize;
 #[allow(non_snake_case)]
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct Frontmatter {
-    Title: String,
-    Author: String,
-    Date: String,
-    Slug: String
+    title: String,
+    author: String,
+    date: String,
+    slug: String
 }
 
 impl Frontmatter {
@@ -40,19 +40,19 @@ impl Frontmatter {
 
     //Extractors. These return a copy of the current values.
     pub fn get_title(&self) -> String {
-        self.Title.clone()
+        self.title.clone()
     }
 
     pub fn get_slug(&self) -> String {
-        self.Slug.clone()
+        self.slug.clone()
     }
 
     pub fn get_author(&self) -> String {
-        self.Author.clone()
+        self.author.clone()
     } 
 
     pub fn get_date(&self) -> String {
-        self.Date.clone()
+        self.date.clone()
     } 
 }
 

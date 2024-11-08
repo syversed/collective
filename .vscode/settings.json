@@ -1,16 +1,5 @@
 {
     "[markdown]": {
     },
-    "frontMatter.framework.id": "other",
-    "frontMatter.content.publicFolder": "",
-    "frontMatter.content.pageFolders": [
-        {
-            "title": "raw",
-            "path": "[[workspace]]/blog/raw"
-        },
-        {
-            "title": "raw",
-            "path": "[[workspace]]/k:/Software/collective-project/collective/blog/raw"
-        }
-    ]
+    "frontMatter.content.publicFolder": ""
 }

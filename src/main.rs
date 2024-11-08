@@ -29,6 +29,8 @@ async fn main() {
     //Construct a shutdown channel. When used, this will shut down Collective.
     // Triggering this is the preferred way to shut down.
     let (shut_tx, mut shut_rx) = tokio::sync::mpsc::channel::<()>(1);
+
+    //Build the app routes.
     let app = routes::build(shut_tx.clone()).await;
 
     //This task handles catching Ctrl-C for Collective. We implement this

@@ -1,4 +1,4 @@
-use std::{collections::HashMap, path::PathBuf};
+use std::{collections::HashMap, io::Read, path::PathBuf};
 
 use axum::http::StatusCode;
 use log::{error, info, trace};
@@ -20,7 +20,7 @@ pub struct Blogposts {
     update this struct and referenced parsed blogposts.
 */
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Blogpost {
     id: String,
     front_matter: Option<Frontmatter>,
@@ -48,7 +48,7 @@ impl Blogposts {
                 info!("Blogpost detected, name: {:?}", f_name);
                 //Read in and parse the blogpost.
                 let post = Blogpost::new_from_file(f_path);
-
+                trace!("Built post: {:?}", post);
                 //self.posts.insert("", v)
             };
 
@@ -78,9 +78,16 @@ impl Blogpost {
     }
 
     //Attempt to read in a new blogpost, from the given filepath.
-    pub async fn new_from_file(path: PathBuf) -> Result<Self, StatusCode> {
+    pub fn new_from_file(path: PathBuf) -> Result<Self, StatusCode> {
+        trace!("Trying to read blogpost from {:?}...", path);
 
-        Err(StatusCode::INTERNAL_SERVER_ERROR)
+        let mut f_post = std::fs::File::open(path)
+            .or(Err(StatusCode::INTERNAL_SERVER_ERROR))?;
+        let mut buf:String = String::new();
+
+        f_post.read_to_string(&mut buf).unwrap();
+        trace!("Read file content: {}", buf);
+        Self::new_from_string(buf)
     }
 
     pub fn parse_frontmatter(raw_post: String) -> Result<(Frontmatter, String), StatusCode> {

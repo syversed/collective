@@ -45,5 +45,13 @@
         }
       ]
     }
+  ],
+  "frontMatter.framework.id": "other",
+  "frontMatter.content.publicFolder": "",
+  "frontMatter.content.pageFolders": [
+    {
+      "title": "blog",
+      "path": "[[workspace]]/blog"
+    }
   ]
 }
